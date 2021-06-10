@@ -9,7 +9,6 @@ from datetime import datetime
 from syslog import syslog
 
 
-print("Temperature Control starting up")
 syslog("Temperature Control starting up")
  
 os.system('modprobe w1-gpio')
@@ -40,34 +39,28 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         temp_f = temp_c * 9.0 / 5.0 + 32.0
         #return temp_c, temp_f
-        print(f'TC: current temp {temp_f}')
         syslog(f'TC: current temp {temp_f}')
         return temp_f
 
 def get_power_state():
     os.system(f'{run_dir}/getstate.sh')
     power_state = os.popen(f'cat {run_dir}/powerstate.txt').read()
-    print(f'TC: getting power state: {power_state}')
     syslog(f'TC: getting power state: {power_state}')
     return int(power_state)
 
 def switch_on():
     os.system(f'{run_dir}/switchon.sh')
-    print('TC: switching on')
     syslog('TC: switching on')
 
 def switch_off():
     os.system(f'{run_dir}/switchoff.sh')
-    print('TC: switching off')
     syslog('TC: switching off')
 
 def check_network():
     network_state = os.popen(f'{run_dir}/networkconnected.sh').read()
     network_state = int(network_state)
-    print(f'TC: checking networking state: {network_state}')
     syslog(f'TC: checking networking state: {network_state}')
     if network_state != 0:
-        print('TC: network state not good, restarting networking')
         syslog('TC: network state not good, restarting networking')
         os.system(f'{run_dir}/restartnetwork.sh')
         
@@ -75,7 +68,7 @@ def check_network():
 
 while True:
     check_network()
-    if datetime.now() > datetime.now().replace(hour=8) and datetime.now() < datetime.now().replace(hour=20):
+    if datetime.now() > datetime.now().replace(hour=7) and datetime.now() < datetime.now().replace(hour=20):
         current_temp = read_temp()
         power_state = get_power_state()
 
@@ -101,6 +94,7 @@ while True:
         
         if on_counter > 8:
             switch_off()
+            on_counter = 0
 
         if time_counter == 0 and power_state == 1:
             current_temp = read_temp()
