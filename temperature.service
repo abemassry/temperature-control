@@ -1,0 +1,19 @@
+[Unit]
+Description=Temperature Service
+
+[Service]
+ExecStart=/home/pi/temperature-control/temperature.py
+# Required on some systems
+WorkingDirectory=/home/pi/temperature-control
+Restart=always
+ # Restart service after 1 seconds if temp service crashes
+ RestartSec=1
+ # Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=TC
+#User=<alternate user>
+#Group=<alternate group>
+
+[Install]
+WantedBy=multi-user.target
