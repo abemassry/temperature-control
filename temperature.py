@@ -46,7 +46,10 @@ def get_power_state():
     os.system(f'{run_dir}/getstate.sh')
     power_state = os.popen(f'cat {run_dir}/powerstate.txt').read()
     syslog(f'TC: getting power state: {power_state}')
-    return int(power_state)
+    try:
+        return int(power_state)
+    except ValueError:
+        return 0
 
 def switch_on():
     os.system(f'{run_dir}/switchon.sh')
