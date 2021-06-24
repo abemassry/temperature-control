@@ -20,7 +20,7 @@ device_file = device_folder + '/w1_slave'
 run_dir = '/home/pi/temperature-control'
 time_counter = 0
 on_counter = 0
-set_temp = 98
+set_temp = 90
  
 def read_temp_raw():
     f = open(device_file, 'r')
